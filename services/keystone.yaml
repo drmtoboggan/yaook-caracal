@@ -1,0 +1,32 @@
+apiVersion: yaook.cloud/v1
+kind: KeystoneDeployment
+metadata:
+  name: keystone
+  namespace: openstack
+spec:
+  region:
+    name: RegionOne
+  database:
+    replicas: 1
+    proxy:
+      replicas: 1
+    backup:
+      schedule: "0 * * * *"
+    storageClassName: longhorn
+    storageSize: 5Gi
+  memcached:
+    replicas: 1
+    memory: 1024
+    connections: 2000
+  api:
+    ingress:
+      fqdn: "keystone.region.com"
+      port: 443
+      ingressClassName: nginx
+    replicas: 1
+  keystoneConfig:
+    token:
+      expiration: 86400
+  issuerRef:
+    name: ca-issuer
+  targetRelease: "2024.1"

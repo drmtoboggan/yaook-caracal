@@ -1,0 +1,84 @@
+apiVersion: yaook.cloud/v1
+kind: NeutronDeployment
+metadata:
+  name: neutron
+  namespace: openstack
+spec:
+  targetRelease: "2024.1"
+  
+  region:
+    name: RegionOne
+  
+  keystoneRef:
+    name: keystone
+  
+  novaRef:
+    name: nova
+  
+  issuerRef:
+    name: ca-issuer
+  
+  database:
+    replicas: 1
+    storageClassName: longhorn
+    storageSize: 5Gi
+    proxy: {}
+    backup:
+      schedule: "0 * * * *"
+  
+  messageQueue:
+    replicas: 1
+  
+  memcached:
+    replicas: 1
+    memory: 1024
+    connections: 2000
+  
+  api:
+    replicas: 1
+    ingress:
+      fqdn: "neutron.region.com"
+      port: 443
+      ingressClassName: nginx
+  
+  neutronConfig:
+    DEFAULT:
+      debug: false
+  
+  neutronML2Config:
+    ml2_type_flat:
+      flat_networks:
+        - provider
+    ml2_type_vlan:
+      network_vlan_ranges:
+        - provider:27:28
+  
+  setup:
+    ovn:
+      northboundOVSDB:
+        replicas: 3
+        backup:
+          schedule: "0 12 * * *"
+        storageClassName: longhorn
+        storageSize: 4Gi
+      
+      southboundOVSDB:
+        replicas: 3
+        backup:
+          schedule: "0 12 * * *"
+        storageClassName: longhorn
+        storageSize: 5Gi
+        ovnRelay: {}
+      
+      northd:
+        threads: 2
+      
+      controller:
+        configTemplates:
+          - nodeSelectors:
+            - matchLabels:
+                compute.yaook.cloud/enabled: "true"
+            bridgeConfig:
+              - bridgeName: br-provider
+                uplinkDevice: ens35
+                openstackPhysicalNetwork: provider

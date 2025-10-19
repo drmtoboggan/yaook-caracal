@@ -1,0 +1,53 @@
+apiVersion: yaook.cloud/v1
+kind: GlanceDeployment
+metadata:
+  name: glance
+  namespace: openstack
+spec:
+  targetRelease: "2024.1"
+  
+  region:
+    name: RegionOne
+  
+  keystoneRef:
+    name: keystone
+  
+  issuerRef:
+    name: ca-issuer
+  
+  database:
+    replicas: 1
+    proxy:
+      replicas: 1
+    backup:
+      schedule: "0 * * * *"
+    storageClassName: longhorn
+    storageSize: 5Gi
+  
+  memcached:
+    replicas: 1
+    memory: 1024
+    connections: 2000
+  
+  api:
+    ingress:
+      fqdn: "glance.region.com"
+      port: 443
+      ingressClassName: nginx
+    replicas: 1
+  
+  glanceConfig:
+    DEFAULT:
+      show_image_direct_url: true
+    glance_store:
+      default_backend: "ceph"
+  
+  backends:
+    ceph:
+      keyringReference: ceph-client-glance-key
+      keyringUsername: glance
+      keyringPoolname: glance.images
+      cephConfig:
+        global:
+          mon_host: "[v2:10.10.28.10:3300/0,v1:10.10.28.10:6789/0] [v2:10.10.28.6:3300/0,v1:10.10.28.6:6789/0] [v2:10.10.28.7:3300/0,v1:10.10.28.7:6789/0] [v2:10.10.28.8:3300/0,v1:10.10.28.8:6789/0]"
+          fsid: "ad9e8f76-3aae-11f0-9498-0fcbb987ca56"
