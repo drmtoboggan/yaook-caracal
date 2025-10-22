@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nova-compute-operator
+  namespace: openstack
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nova-compute-operator
+  namespace: openstack
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nova-operator  # Reuse the same role
+subjects:
+- kind: ServiceAccount
+  name: nova-compute-operator
+  namespace: openstack
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nova-compute-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nova-operator  # Reuse the same clusterrole
+subjects:
+- kind: ServiceAccount
+  name: nova-compute-operator
+  namespace: openstack
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nova-compute-operator
+  namespace: openstack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nova-compute-operator
+  template:
+    metadata:
+      labels:
+        app: nova-compute-operator
+    spec:
+      serviceAccountName: nova-compute-operator
+      containers:
+      - name: operator
+        image: 192.168.1.24:5000/yaook/operator:local
+        args:
+        - "nova_compute"
+        - "run"
+        env:
+        - name: YAOOK_OP_VERBOSITY
+          value: "3"
+        - name: YAOOK_OP_RUNNER_COUNT
+          value: "3"
+        - name: YAOOK_OP_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: YAOOK_EVICT_MANAGER_IMAGE
+          value: 192.168.1.24:5000/yaook/operator:local
+        - name: YAOOK_NOVA_COMPUTE_OP_JOB_IMAGE
+          value: 192.168.1.24:5000/yaook/operator:local

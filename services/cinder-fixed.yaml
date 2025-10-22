@@ -5,16 +5,13 @@ metadata:
   namespace: openstack
 spec:
   targetRelease: "2024.1"
-  
   region:
     name: RegionOne
-  
   keystoneRef:
     name: keystone
-  
   issuerRef:
     name: ca-issuer
-  
+
   database:
     replicas: 1
     storageClassName: longhorn
@@ -24,7 +21,7 @@ spec:
       replicas: 1
     backup:
       schedule: "0 * * * *"
-  
+
   messageQueue:
     replicas: 1
     resources:
@@ -32,26 +29,26 @@ spec:
         limits:
           memory: 1G
           cpu: 1000m
-  
+
   memcached:
     replicas: 1
     memory: 1024
     connections: 2000
-  
+
   api:
     replicas: 1
     ingress:
       fqdn: "cinder.region.com"
       port: 443
       ingressClassName: nginx
-  
+
   scheduler:
     replicas: 1
-  
+
   cinderConfig:
     DEFAULT:
       debug: false
-  
+
   backends:
     ceph:
       volume:
@@ -66,19 +63,18 @@ spec:
           rbd_pool: cinder.volumes
           rbd_flatten_volume_from_snapshot: false
           rbd_max_clone_depth: 5
-  
+
   backup:
     ceph-backup:
       replicas: 1
-      cephConfig:
-        mon_host: "10.10.28.10:6789,10.10.28.6:6789,10.10.28.7:6789,10.10.28.8:6789"
+      terminationGracePeriod: 3600
       cinderConfig:
         DEFAULT:
-          backup_driver: cinder.backup.drivers.ceph.CephBackupDriver
-          backup_ceph_pool: cinder.backups
+          backup_ceph_user: "cinder-backup"
+          backup_ceph_pool: "cinder.backups"
           backup_ceph_chunk_size: 134217728
-          backup_ceph_user: cinder-backup
-  
+          backup_driver: "cinder.backup.drivers.ceph.CephBackupDriver"
+
   databaseCleanup:
     schedule: "0 0 * * *"
     deletionTimeRange: 60

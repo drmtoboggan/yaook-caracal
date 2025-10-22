@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nova-compute-operator
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list", "patch", "update", "watch"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create", "get"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterrolebindings", "clusterroles"]
+  verbs: ["create", "list", "get", "patch", "delete", "deletecollection"]
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["create", "get", "list", "delete", "patch", "update"]
+- apiGroups: ["yaook.cloud"]
+  resources: ["yaookdisruptionbudgets", "yaookdisruptionbudgets/status"]
+  verbs: ["get", "list", "patch"]
+- apiGroups: ["compute.yaook.cloud"]
+  resources: ["novacomputenodes", "novacomputenodes/status"]
+  verbs: ["get", "list", "patch", "update", "replace"]

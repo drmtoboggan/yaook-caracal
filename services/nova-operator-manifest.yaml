@@ -1,0 +1,716 @@
+---
+# Source: nova-operator/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: openstack
+  name: nova-operator
+  labels:
+    helm.sh/chart: nova-operator-0.20250724.0-base
+    app.kubernetes.io/name: nova-operator
+    app.kubernetes.io/instance: nova-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "0.20250724.0-base"
+---
+# Source: nova-operator/templates/gen-roles.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nova-operator
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+# Source: nova-operator/templates/cluster-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nova-operator
+  labels:
+    helm.sh/chart: nova-operator-0.20250724.0-base
+    app.kubernetes.io/name: nova-operator
+    app.kubernetes.io/instance: nova-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "0.20250724.0-base"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nova-operator
+subjects:
+- kind: ServiceAccount
+  name: nova-operator
+  namespace: openstack
+---
+# Source: nova-operator/templates/gen-roles.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nova-operator
+  namespace: openstack
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - configmaps/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ''
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - ''
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - nodes/status
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ''
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - secrets/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ''
+  resources:
+  - serviceaccounts
+  - services
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ''
+  resources:
+  - services/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - issuers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - issuers/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - compute.yaook.cloud
+  resources:
+  - novacomputenodes
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - compute.yaook.cloud
+  resources:
+  - novacomputenodes/status
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - compute.yaook.cloud
+  resources:
+  - novahostaggregates
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - compute.yaook.cloud
+  resources:
+  - novahostaggregates/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - compute.yaook.cloud
+  resources:
+  - sshidentities
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - compute.yaook.cloud
+  resources:
+  - sshidentities/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - events.k8s.io
+  resources:
+  - events
+  verbs:
+  - create
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - amqpservers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - amqpservers/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - amqpusers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - amqpusers/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - memcachedservices
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - memcachedservices/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - mysqlservices
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - mysqlservices/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - mysqlusers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infra.yaook.cloud
+  resources:
+  - mysqlusers/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - externalkeystonedeployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - externalkeystonedeployments/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - keystonedeployments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - keystonedeployments/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - keystoneendpoints
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - keystoneendpoints/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - keystoneusers
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - keystoneusers/status
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - novadeployments
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - novadeployments/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - yaookdisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - yaook.cloud
+  resources:
+  - yaookdisruptionbudgets/status
+  verbs:
+  - get
+  - patch
+---
+# Source: nova-operator/templates/role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: openstack
+  name: nova-operator
+  labels:
+    helm.sh/chart: nova-operator-0.20250724.0-base
+    app.kubernetes.io/name: nova-operator
+    app.kubernetes.io/instance: nova-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "0.20250724.0-base"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nova-operator
+subjects:
+- kind: ServiceAccount
+  name: nova-operator
+  namespace: openstack
+---
+# Source: nova-operator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nova-operator
+  labels:
+    helm.sh/chart: nova-operator-0.20250724.0-base
+    app.kubernetes.io/name: nova-operator
+    app.kubernetes.io/instance: nova-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "0.20250724.0-base"
+  namespace: openstack
+spec:
+  type: ClusterIP
+  selector:
+      app.kubernetes.io/name: nova-operator
+      app.kubernetes.io/instance: nova-operator
+      app.kubernetes.io/managed-by: Helm
+  ports:
+    - name: metrics
+      port: 8000
+      protocol: TCP
+---
+# Source: nova-operator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nova-operator
+  labels:
+    helm.sh/chart: nova-operator-0.20250724.0-base
+    app.kubernetes.io/name: nova-operator
+    app.kubernetes.io/instance: nova-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "0.20250724.0-base"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nova-operator
+      app.kubernetes.io/instance: nova-operator
+      app.kubernetes.io/managed-by: Helm
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: nova-operator-0.20250724.0-base
+        app.kubernetes.io/name: nova-operator
+        app.kubernetes.io/instance: nova-operator
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/version: "0.20250724.0-base"
+    spec:
+      serviceAccountName: nova-operator
+      containers:
+      - name: operator
+        image: 192.168.1.24:5000/yaook/operator:local
+        imagePullPolicy: Always
+        securityContext:
+          runAsUser: 2020
+          runAsGroup: 2020
+        ports:
+        - containerPort: 8000
+          name: metrics
+          protocol: TCP
+        args:
+        - "nova"
+        - run
+        env:
+        - name: YAOOK_OP_VERBOSITY
+          value: "3"
+        - name: YAOOK_OP_RUNNER_COUNT
+          value: "3"
+        - name: YAOOK_OP_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: YAOOK_OP_MULTIPLE_NAMESPACES
+          value: "false"
+        - name: PYTHONOPTIMIZE
+          value: "1"
+        
+        - name: YAOOK_EVICT_MANAGER_IMAGE
+          value: 192.168.1.24:5000/yaook/operator:local
+        volumeMounts:
+      volumes:
+      affinity:
+          nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                      - matchExpressions:
+                          - key: operator.yaook.cloud/nova
+                            operator: Exists
+                      - matchExpressions:
+                          - key: operator.yaook.cloud/any
+                            operator: Exists
+      tolerations:
+          - key: operator.yaook.cloud/nova
+            operator: Exists
+          - key: operator.yaook.cloud/any
+            operator: Exists
+---
+# Source: nova-operator/templates/gen-roles.yaml
+# THESE ROLES WERE AUTOGENERATED USING THE yaook.op CLI
+# DO NOT MODIFY
+---
+# Source: nova-operator/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nova-operator
+  labels:
+    helm.sh/chart: nova-operator-0.20250724.0-base
+    app.kubernetes.io/name: nova-operator
+    app.kubernetes.io/instance: nova-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/version: "0.20250724.0-base"
+  namespace: openstack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nova-operator
+      app.kubernetes.io/instance: nova-operator
+      app.kubernetes.io/managed-by: Helm
+  endpoints:
+    - port: metrics
+      interval: 15s
+  namespaceSelector:
+    matchNames:
+      - openstack
+

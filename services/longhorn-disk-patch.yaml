@@ -1,0 +1,8 @@
+spec:
+  disks:
+    sdb:
+      allowScheduling: true
+      evictionRequested: false
+      path: /var/lib/longhorn/sdb
+      storageReserved: 0
+      tags: []

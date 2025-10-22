@@ -1,0 +1,20 @@
+apiVersion: yaook.cloud/v1
+kind: HorizonDeployment
+metadata:
+  name: horizon
+  namespace: openstack
+spec:
+  targetRelease: "2024.1"
+  
+  replicas: 1
+  
+  keystoneRef:
+    name: keystone
+  
+  ingress:
+    fqdn: "horizon.region.com"
+    port: 443
+    ingressClassName: nginx
+  
+  issuerRef:
+    name: ca-issuer
