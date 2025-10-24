@@ -1,0 +1,78 @@
+apiVersion: yaook.cloud/v1
+kind: OctaviaDeployment
+metadata:
+  name: octavia
+  namespace: openstack
+spec:
+  targetRelease: "2024.1"
+
+  region:
+    name: RegionOne
+
+  keystoneRef:
+    name: keystone
+
+  issuerRef:
+    name: ca-issuer
+
+  database:
+    replicas: 1
+    storageClassName: longhorn
+    storageSize: 5Gi
+    timeoutClient: 300
+    proxy:
+      replicas: 1
+    backup:
+      schedule: "0 * * * *"
+
+  messageQueue:
+    replicas: 1
+
+  memcached:
+    replicas: 1
+    memory: 1024
+    connections: 2000
+
+  api:
+    replicas: 1
+    ingress:
+      fqdn: "octavia.region.com"
+      port: 443
+      ingressClassName: nginx
+
+  worker: {}
+
+  health_manager: {}
+
+  housekeeping:
+    replicas: 1
+
+  networking:
+    # Management network CIDR - must not collide with Kubernetes networks
+    # This network is used for communication between Octavia and Amphora VMs
+    managementSubnetCIDR: "172.16.0.0/12"
+
+  octaviaConfig:
+    DEFAULT:
+      debug: false
+    
+    controller_worker:
+      # These will be configured after we create the required resources
+      # amp_flavor_id: ""  # Set after creating flavor
+      # amp_image_tag: "amphora"  # Set after uploading amphora image
+      # amp_image_owner_id: ""  # Set to service project ID
+      amp_active_retries: 100
+      amp_active_wait_sec: 2
+      network_driver: allowed_address_pairs_driver
+      compute_driver: compute_nova_driver
+      amphora_driver: amphora_haproxy_rest_driver
+    
+    health_manager:
+      bind_port: 5555
+      heartbeat_interval: 10
+      heartbeat_timeout: 60
+      health_check_interval: 3
+      failover_timeout: 600
+
+  policy:
+    "context_is_admin": "role:load-balancer_admin or role:admin"

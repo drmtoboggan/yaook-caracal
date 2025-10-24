@@ -5,16 +5,13 @@ metadata:
   namespace: openstack
 spec:
   targetRelease: "2024.1"
-  
   region:
     name: RegionOne
-  
   keystoneRef:
     name: keystone
-  
   issuerRef:
     name: ca-issuer
-  
+
   database:
     api:
       replicas: 1
@@ -44,56 +41,56 @@ spec:
       proxy: {}
       backup:
         schedule: "0 * * * *"
-  
+
   eviction:
     volumeLockDurationSeconds: 30
-  
+
   messageQueue:
     cell1:
       replicas: 1
-  
+
   memcached:
     replicas: 1
     memory: 1024
     connections: 2000
-  
+
   api:
     replicas: 1
     ingress:
       fqdn: "nova.region.com"
       port: 443
       ingressClassName: nginx
-  
+
   conductor:
     replicas: 1
-  
+
   placement:
     replicas: 1
     ingress:
       fqdn: "placement.region.com"
       port: 443
       ingressClassName: nginx
-  
+
   scheduler:
     replicas: 1
-  
+
   vnc:
     replicas: 1
     ingress:
       fqdn: "vnc.region.com"
       port: 443
       ingressClassName: nginx
-  
+
   metadata:
     replicas: 1
-  
+
   novaConfig:
     DEFAULT:
       debug: false
       cpu_allocation_ratio: 4.0
       ram_allocation_ratio: 1.0
       reserved_host_memory_mb: 2048
-  
+
   compute:
     configTemplates:
       - nodeSelectors:
@@ -109,7 +106,7 @@ spec:
             images_rbd_pool: vms
             images_rbd_ceph_conf: /etc/ceph/ceph.conf
             rbd_user: nova
-            disk_cachemodes: "network=writeback"
+            disk_cachemodes: ["network=writeback"]
             hw_disk_discard: unmap
             inject_password: false
             inject_key: false
@@ -121,13 +118,13 @@ spec:
             user: nova
             uuid: "f6e70546-91cc-4475-bebb-e1eaf0f0c002"
             cephConfig:
-              global:
-                mon_host: "[v2:10.10.28.10:3300/0,v1:10.10.28.10:6789/0] [v2:10.10.28.6:3300/0,v1:10.10.28.6:6789/0] [v2:10.10.28.7:3300/0,v1:10.10.28.7:6789/0] [v2:10.10.28.8:3300/0,v1:10.10.28.8:6789/0]"
+              client.nova:
+                mon_host: "10.10.28.10:6789,10.10.28.6:6789,10.10.28.7:6789,10.10.28.8:6789"
                 fsid: "ad9e8f76-3aae-11f0-9498-0fcbb987ca56"
-  
+
   databaseCleanup:
     schedule: "0 0 * * *"
     deletionTimeRange: 60
-  
+
   placementCleanup:
     schedule: "*/5 * * * *"
